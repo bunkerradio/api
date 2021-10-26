@@ -1,9 +1,20 @@
 import fastify from 'fastify';
+import axios from 'axios';
 
 const server = fastify();
 
-server.get('/ping', async (request, reply) => {
-	return console.log('Recieved request for /ping'), 'Pong!';
+server.get('/stats', async (request, reply) => {
+	// Temp Azuracast for testing | Harmony
+	axios.get('https://derrick.xonosho.st/api/nowplaying/1').then(resp => {
+		let apiResponse = resp.data;
+		reply.send({
+			song_text: `${apiResponse.now_playing.song.text}`,
+			artist: `${apiResponse.now_playing.song.artist}`,
+			title: `${apiResponse.now_playing.song.title}`,
+			id: `${apiResponse.now_playing.song.id}`,
+			listeners: `${apiResponse.listeners.total}`,
+		});
+	});
 });
 
 server.listen(process.env.PORT ?? 5050, err => {
