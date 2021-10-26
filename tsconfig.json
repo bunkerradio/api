@@ -3,10 +3,11 @@
 		"forceConsistentCasingInFileNames": true,
 		"module": "commonjs",
 		"esModuleInterop": true,
-		"outDir": "./build",
-		"rootDir": "./src",
+		"outDir": "dist",
+		"rootDir": "src",
 		"target": "es6",
 		"skipLibCheck": true,
 		"strict": true
-	}
+	},
+	"exclude": ["dist", "node_modules"]
 }
