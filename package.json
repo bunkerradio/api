@@ -1,7 +1,7 @@
 {
 	"name": "api",
 	"version": "1.0.0",
-	"description": "🔌 Bunker's Public API, Coded in Typescript for maximum speed.",
+	"description": "🔌 Bunker's Public API, coded in TypeScript for maximum speed.",
 	"main": "dist/index.js",
 	"repository": "https://github.com/bunkerradio/api.git",
 	"author": "Polar <89708970+polargh@users.noreply.github.com>",
