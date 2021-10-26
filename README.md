@@ -1,6 +1,6 @@
 # Bunker's API
 
-🔌 Bunker's Public API, Coded in Typescript for maximum speed.
+🔌 Bunker's Public API, coded in TypeScript for maximum speed.
 
 
 ## Installation
