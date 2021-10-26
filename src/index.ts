@@ -1,18 +1,18 @@
 import fastify from 'fastify';
 import axios from 'axios';
+import {Stats} from './types/stats';
 
 const server = fastify();
 
 server.get('/stats', async (request, reply) => {
-	axios.get('https://derrick.xonosho.st/api/nowplaying/23').then(resp => {
-		let apiResponse = resp.data;
-		reply.send({
-			song_text: `${apiResponse.now_playing.song.text}`,
-			artist: `${apiResponse.now_playing.song.artist}`,
-			title: `${apiResponse.now_playing.song.title}`,
-			id: `${apiResponse.now_playing.song.id}`,
-			listeners: `${apiResponse.listeners.total}`,
-		});
+	const {data} = await axios.get<Stats>('https://derrick.xonosho.st/api/nowplaying/23');
+
+	reply.send({
+		song_text: data.now_playing.song.text,
+		artist: data.now_playing.song.artist,
+		title: data.now_playing.song.title,
+		id: data.now_playing.song.id,
+		listeners: data.listeners.total,
 	});
 });
 
