@@ -4,8 +4,7 @@ import axios from 'axios';
 const server = fastify();
 
 server.get('/stats', async (request, reply) => {
-	// Temp Azuracast for testing | Harmony
-	axios.get('https://derrick.xonosho.st/api/nowplaying/1').then(resp => {
+	axios.get('https://derrick.xonosho.st/api/nowplaying/23').then(resp => {
 		let apiResponse = resp.data;
 		reply.send({
 			song_text: `${apiResponse.now_playing.song.text}`,
