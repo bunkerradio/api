@@ -4,7 +4,7 @@ import { Stats } from './types/stats';
 
 const server = fastify();
 
-server.get('/treble/v1/stats', async (request, reply) => {
+server.get('/api/treble/stats', async (request, reply) => {
 	const { data } = await axios.get<Stats>('https://radio.bunker.dance/connect');
 	reply.send({
 		success: 'true',
