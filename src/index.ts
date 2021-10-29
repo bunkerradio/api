@@ -1,11 +1,11 @@
 import fastify from 'fastify';
 import axios from 'axios';
-import {Stats} from './types/stats';
+import { Stats } from './types/stats';
 
 const server = fastify();
 
-server.get('/api/v1/stats', async (request, reply) => {
-	const {data} = await axios.get<Stats>('https://derrick.xonosho.st/api/nowplaying/23');
+server.get('/treble/v1/stats', async (request, reply) => {
+	const { data } = await axios.get<Stats>('https://radio.bunker.dance/connect');
 	reply.send({
 		success: 'true',
 		song: {
