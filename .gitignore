@@ -6,3 +6,7 @@ dist
 .yarn/*
 !.yarn/releases
 !.yarn/plugins
+
+# API
+spotify.json
+cache/
