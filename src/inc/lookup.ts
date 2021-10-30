@@ -94,7 +94,7 @@ class Lookup {
 
         //check for problems
         let problems:any = [];
-        if (deezerTrack.explicit_lyrics && spotifyTrack.explicit) {
+        if (deezerTrack.explicit_lyrics || spotifyTrack.explicit) {
             problems.push({
                 code: "explicit_lyrics",
                 description: "This track has explicit lyrics."
