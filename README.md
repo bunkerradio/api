@@ -9,7 +9,9 @@
 git clone https://github.com/bunkerradio/api.git
 ```
 
-Fill out values inside of the .env
+Register an application from [Spotify's API Dashboard](https://developer.spotify.com/dashboard/login). Please note: API rate limits may be in affect.
+
+Enter the client ID and secret into the `config.json` file.
 
 ```bash
 yarn add
