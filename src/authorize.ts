@@ -1,14 +1,14 @@
-var SpotifyWebApi = require('spotify-web-api-node');
-require('dotenv').config();
+const SpotifyWebApi = require('spotify-web-api-node');
+const config = require('../config.json');
 import fastify from 'fastify';
 import fs from 'fs';
 
 const server = fastify();
 
 const spotify = new SpotifyWebApi({
-	clientId: process.env.spotify_client_id,
-	clientSecret: process.env.spotify_client_secret,
-	redirectUri: process.env.redirect
+	clientId: config.spotify_client_id,
+	clientSecret: config.spotify_client_secret,
+	redirectUri: config.spotify_redirect
 });
 
 var authorizeURL = spotify.createAuthorizeURL(['user-read-email'], 'bunker');
@@ -21,4 +21,4 @@ server.get('/api/spotifyAuth', async (req: any, res) => {
     process.exit();
 })
 
-server.listen(process.env.http_port ?? 5050);
+server.listen(config.http_port ?? 5050);

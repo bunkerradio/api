@@ -101,34 +101,31 @@ export interface LookupSong {
 	duration: number;
 	explicit: boolean;
 	preview: string;
-	spotify: string;
-	deezer: string;
+	spotify_id: string;
+	deezer_id: string;
 	isrc: string;
-	ean: string;
-	upc: string;
-	problems: LookupProblem[];
 	release_date: string;
 	accuracy: number;
+	problems: LookupProblem[];
 	powered_by: LookupCopyright;
 	version: number;
 	cache: number;
 }
 
 export interface LookupProblem {
-	description: string;
 	code: string;
+	description: string;
 }
 
 export interface LookupArtist {
 	name: string;
-	spotify: string;
-	deezer: string;
+	spotify_id: string;
+	deezer_id: string;
 	covers: LookupCovers;
 }
 
 export interface LookupAlbum {
 	title: string;
-	artist: string;
 	spotify_id: string;
 	deezer_id: string;
 }
