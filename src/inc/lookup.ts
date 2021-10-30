@@ -1,5 +1,6 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const ColorThief = require('color-thief');
+const config = require('../../config.json');
 const colorThief = new ColorThief();
 import axios from 'axios';
 import fs from 'fs';
@@ -152,7 +153,7 @@ class Lookup {
                 website: "https://bunker.dance",
                 copyright: "Copyright 2021-Present Bunker | Source: https://github.com/bunkerradio/api",
             },
-            version: "1.0.0",
+            version: config.version,
             cache: new Date().getTime()
         }
 

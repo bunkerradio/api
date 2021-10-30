@@ -7,6 +7,7 @@ import fastify from 'fastify';
 import axios from 'axios';
 import { Stats } from './types/stats';
 const config = require('../config.json');
+config.started = new Date();
 const Lookup = require('./inc/lookup');
 
 const lookup = new Lookup({
@@ -16,6 +17,30 @@ const lookup = new Lookup({
 });
 
 const server = fastify();
+
+server.get('/', (req, res) => {
+	let endTime = <any>new Date();
+  	var timeDiff = endTime - config.started; //in ms
+  	// strip the ms
+  	timeDiff /= 1000;
+
+	var sec_num = Math.round(timeDiff) // don't forget the second param
+	var hours   = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = sec_num - (hours * 3600) - (minutes * 60);
+	var uptimeHours = hours.toString(), uptimeMinutes = minutes.toString(), uptimeSeconds = seconds.toString();
+
+	if (hours   < 10) {uptimeHours   = "0"+hours;}
+	if (minutes < 10) {uptimeMinutes = "0"+minutes;}
+	if (seconds < 10) {uptimeSeconds = "0"+seconds;}
+
+  	// get seconds 
+	res.send({
+		version: config.version,
+		uptime: uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds,
+		wiki: "https://github.com/bunkerradio/api/wiki"
+	})
+})
 
 server.get('/api/treble/stats', async (request, reply) => {
 	const { data } = await axios.get<Stats>(config.azura_api_url ?? "https://radio.bunker.dance/connect");
