@@ -1,10 +1,9 @@
 export interface Stats {
 	station: Station;
-	listeners: Listeners2;
+	listeners: Listeners;
 	live: Live;
 	now_playing: NowPlaying;
 	playing_next: PlayingNext;
-	song_history: SongHistory[];
 	is_online: boolean;
 	cache: string;
 }
@@ -38,12 +37,6 @@ export interface Mount {
 }
 
 export interface Listeners {
-	total: number;
-	unique: number;
-	current: number;
-}
-
-export interface Listeners2 {
 	total: number;
 	unique: number;
 	current: number;
@@ -84,10 +77,10 @@ export interface PlayingNext {
 	duration: number;
 	playlist: string;
 	is_request: boolean;
-	song: Song2;
+	song: PlayingNextSong;
 }
 
-export interface Song2 {
+export interface PlayingNextSong {
 	id: string;
 	text: string;
 	artist: string;
@@ -99,24 +92,53 @@ export interface Song2 {
 	custom_fields: any[];
 }
 
-export interface SongHistory {
-	sh_id: number;
-	played_at: number;
+export interface LookupSong {
+	title: string;
+	artist: string;
+	album: LookupAlbum;
+	color: string;
+	covers: LookupCovers;
 	duration: number;
-	playlist: string;
-	streamer: string;
-	is_request: boolean;
-	song: Song3;
+	explicit: boolean;
+	preview: string;
+	spotify: string;
+	deezer: string;
+	isrc: string;
+	ean: string;
+	upc: string;
+	problems: LookupProblem[];
+	release_date: string;
+	accuracy: number;
+	powered_by: LookupCopyright;
+	version: number;
+	cache: number;
 }
 
-export interface Song3 {
-	id: string;
-	text: string;
-	artist: string;
+export interface LookupProblem {
+	description: string;
+	code: string;
+}
+
+export interface LookupArtist {
+	name: string;
+	spotify: string;
+	deezer: string;
+	covers: LookupCovers;
+}
+
+export interface LookupAlbum {
 	title: string;
-	album: string;
-	genre: string;
-	lyrics: string;
-	art: string;
-	custom_fields: any[];
+	artist: string;
+	spotify_id: string;
+	deezer_id: string;
+}
+
+export interface LookupCovers {
+	big: string;
+	medium: string;
+	small: string;
+}
+
+export interface LookupCopyright {
+	message: string;
 }

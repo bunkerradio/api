@@ -7,7 +7,7 @@
 		"rootDir": "src",
 		"target": "es6",
 		"skipLibCheck": true,
-		"strict": true
+		"strict": false
 	},
 	"exclude": ["dist", "node_modules"]
 }

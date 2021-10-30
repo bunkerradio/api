@@ -9,6 +9,8 @@
 git clone https://github.com/bunkerradio/api.git
 ```
 
+Fill out values inside of the .env
+
 ```bash
 yarn add
 ```
