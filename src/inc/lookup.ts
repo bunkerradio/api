@@ -83,6 +83,11 @@ class Lookup {
         })
     }
 
+    async getLyrics(spotifyTrack:any) {
+        let lyrics = await axios.get(`https://api.lyrics.ovh/v1/${spotifyTrack.artists[0].name}/${spotifyTrack.name}`);
+        return lyrics.data.lyrics
+    }
+
     combineArtists(artistList: any) {
         let artists = "";
 	    artistList.forEach((item: any) => {
@@ -116,6 +121,9 @@ class Lookup {
 
         //combine artist names
         let artists = this.combineArtists(spotifyTrack.artists);
+
+        //get lyrics
+        let lyrics = await this.getLyrics(spotifyTrack);
 
         //make response
         var response = {
@@ -152,6 +160,7 @@ class Lookup {
             bpm: deezerTrack.bpm,
             gain: deezerTrack.gain,
             preview: spotifyTrack.preview_url || deezerTrack.preview,
+            lyrics,
             release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
             problems,
             powered_by: {
