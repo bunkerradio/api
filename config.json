@@ -1,6 +1,6 @@
 {
-    "spotify_client_id":"client_id_here",
-    "spotify_client_secret":"client_secret_here",
+    "spotify_client_id":"3e8f034a711e4cd28e6632b6dce9fe14",
+    "spotify_client_secret":"b11709c4e17c4513aef46e20d116ff7f",
     "spotify_redirect":"http://localhost:5050/api/spotifyAuth",
     "azura_api_url":"https://radio.bunker.dance/connect",
     "http_port":5050,

@@ -101,7 +101,7 @@ class Lookup {
             })
         }
 
-        if (deezerTrack.explicit_content_cover == 2) {
+        if (deezerTrack.explicit_content_cover == 1) {
             problems.push({
                 code: "explicit_cover",
                 description: "This track has an explicit cover."
