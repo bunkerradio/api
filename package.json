@@ -25,7 +25,8 @@
 	"scripts": {
 		"build": "tsc",
 		"start": "node .",
-		"authorize": "node dist/authorize.js"
+		"authorize": "node dist/authorize.js",
+		"clear": "node dist/clear.js"
 	},
 	"packageManager": "yarn@3.1.0",
 	"devDependencies": {

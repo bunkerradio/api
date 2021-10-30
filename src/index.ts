@@ -44,13 +44,21 @@ server.get('/', (req, res) => {
 
 server.get('/api/treble/stats', async (request, reply) => {
 	const { data } = await axios.get<Stats>(config.azura_api_url ?? "https://radio.bunker.dance/connect");
-	reply.send({
-		success: true,
-		song: {
+
+	let spotifyTrack = await lookup.search(data.now_playing.song.title, data.now_playing.song.artist);
+	let track;
+	if (spotifyTrack) {
+		track = await lookup.getTrack(spotifyTrack);
+	} else {
+		track = {
 			title: data.now_playing.song.title,
 			artist: data.now_playing.song.artist,
-			album: data.now_playing.song.artist,
-		},
+			album: data.now_playing.song.album
+		}
+	}
+	reply.send({
+		success: true,
+		song: track,
 		on_air: {
 			live: data.live.streamer_name || 'AutoDJ',
 		},
@@ -68,9 +76,18 @@ server.get('/api/treble/stats', async (request, reply) => {
 });
 
 server.get("/api/treble/lookup", async (req: any, res) => {
+	if (!req.query.search) {
+		res.send({
+			success: false,
+			error: {
+				code: 404,
+				description: "Not Found"
+			}
+		})
+		return;
+	}
 	//get spotify track list
-	let spotifyTracks = await lookup.spotify.searchTracks(`track:${req.query.track} artist:${req.query.artist}`, {limit: 1})
-	let spotifyTrack = spotifyTracks.body.tracks.items[0];
+	let spotifyTrack = await lookup.search(req.query.search);
 
 	//check if spotify is there
 	if (!spotifyTrack) {
@@ -84,24 +101,11 @@ server.get("/api/treble/lookup", async (req: any, res) => {
 		return;
 	}
 
-	//check for cache
-	if (lookup.getCachedTrack(spotifyTrack.external_ids.isrc)) {
-		res.type("json");
-		res.send({
-			success: true,
-			accuracy: lookup.similarity(spotifyTrack.name, req.query.track),
-			result: lookup.getCachedTrack(spotifyTrack.external_ids.isrc)
-		});
-		return;
-	}
-
-	lookup.cacheTrack(spotifyTrack).then((track:any) => {
-		res.send({
-			success: true,
-			accuracy: lookup.similarity(spotifyTrack.name, req.query.track),
-			result: track
-		});
-	})
+	let track = await lookup.getTrack(spotifyTrack);
+	res.send({
+		success: true,
+		result: track
+	});
 })
 
 server.listen(config.http_port ?? 5050, err => {

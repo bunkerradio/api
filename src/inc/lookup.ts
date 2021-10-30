@@ -40,6 +40,13 @@ class Lookup {
         setInterval(this.refreshToken, .95 * 1000 * 3600);
     }
 
+    async search(search:string = "") {
+        let spotifyTracks = await this.spotify.searchTracks(search, {limit: 1});
+	    let spotifyTrack = spotifyTracks.body.tracks.items[0];
+
+        return spotifyTrack;
+    }
+
     refreshToken() {
         let self = this;
         this.spotify.refreshAccessToken().then(
@@ -55,11 +62,11 @@ class Lookup {
         );
     }
 
-    getCachedTrack(isrc: string) {
-        if (fs.existsSync(`./cache/data/${isrc}.json`)) {
-            return JSON.parse(fs.readFileSync(`./cache/data/${isrc}.json`, 'utf-8'));
+    getTrack(spotifyTrack:any) {
+        if (fs.existsSync(`./cache/data/${spotifyTrack.external_ids.isrc}.json`)) {
+            return JSON.parse(fs.readFileSync(`./cache/data/${spotifyTrack.external_ids.isrc}.json`, 'utf-8'));
         } else {
-            return false;
+            return this.cacheTrack(spotifyTrack);
         }
     }
 
@@ -90,8 +97,7 @@ class Lookup {
         let deezerTracks = await axios.get(`https://api.deezer.com/2.0/track/isrc:${spotifyTrack.external_ids.isrc}&limit=1`);
         let deezerTrack = deezerTracks.data;
 
-        let color = await this.getColor(deezerTrack.album.cover_medium, spotifyTrack.external_ids.isrc);
-
+        let color = await this.getColor(deezerTrack.album.cover_medium, spotifyTrack.external_ids.isrc)
         //check for problems
         let problems:any = [];
         if (deezerTrack.explicit_lyrics || spotifyTrack.explicit) {
@@ -108,27 +114,23 @@ class Lookup {
             })
         }
 
-        if (!deezerTrack) {
-            problems.push({
-                code: "deezer_not_found",
-                description: "The API was not able to find a result from Deezer."
-            })
-        }
-
-        if (!spotifyTrack) {
-            problems.push({
-                code: "spotify_not_found",
-                description: "The API was not able to find a result from Spotify."
-            })
-        }
-
         //combine artist names
         let artists = this.combineArtists(spotifyTrack.artists);
 
         //make response
         var response = {
             title: spotifyTrack.name,
-            artist: artists,
+            artist: {
+                names: artists,
+                spotify_id: spotifyTrack.artists[0].id,
+                deezer_id: deezerTrack.artist.id,
+                picture: {
+                    xl: deezerTrack.artist.picture_xl,
+                    large: deezerTrack.artist.picture_big,
+                    medium: deezerTrack.artist.picture_medium,
+                    small: deezerTrack.artist.picture_small,
+                }
+            },
             album: {
                 title: spotifyTrack.album.name,
                 spotify_id: spotifyTrack.album.id,
@@ -136,18 +138,21 @@ class Lookup {
             },
             color: color,
             covers: {
-                extra: deezerTrack.album.cover_xl,
+                xl: deezerTrack.album.cover_xl,
                 large: deezerTrack.album.cover_big,
                 medium: deezerTrack.album.cover_medium,
                 small: deezerTrack.album.cover_small,
             },
-            duration: spotifyTrack.duration_ms,
-            explicit: spotifyTrack.explicit,
-            preview: spotifyTrack.preview_url || deezerTrack.preview,
             spotify_id: spotifyTrack.id,
             deezer_id: deezerTrack.id,
+            popularity: spotifyTrack.popularity,
+            rank: deezerTrack.rank,
             isrc: spotifyTrack.external_ids.isrc,
-            release_date: spotifyTrack.album.release_date,
+            duration: spotifyTrack.duration_ms,
+            bpm: deezerTrack.bpm,
+            gain: deezerTrack.gain,
+            preview: spotifyTrack.preview_url || deezerTrack.preview,
+            release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
             problems,
             powered_by: {
                 website: "https://bunker.dance",
@@ -159,8 +164,8 @@ class Lookup {
 
         //save and serve response
         fs.writeFileSync(`./cache/data/${spotifyTrack.external_ids.isrc}.json`, JSON.stringify(response));
-        return response;
-    }
+        return response; 
+    };
 
     similarity(s1:string, s2:string) {
         var longer = s1;
