@@ -2,6 +2,11 @@
 
 🔌 Bunker's Public API, coded in TypeScript for maximum speed.
 
+
+## Disclaimer
+
+Bunker's API is currently in beta, if any problems arise, especially with the lookup method, please feel free to drop either Chezzer#6969 or Polar#7979 a DM.
+
 ## Installation
 
 ```bash
