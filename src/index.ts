@@ -79,7 +79,9 @@ server.get('/api/treble/stats', async (request, reply) => {
 
 server.get("/api/treble/lookup", async (req: any, res) => {
 	res.header("Access-Control-Allow-Origin", "*");
-	if (!req.query.search) {
+	let search = req.query.search;
+
+	if (!search) {
 		res.send({
 			success: false,
 			error: {
@@ -90,18 +92,27 @@ server.get("/api/treble/lookup", async (req: any, res) => {
 		return;
 	}
 	//get spotify track list
-	let spotifyTrack = await lookup.search(req.query.search);
+	let spotifyTrack = await lookup.search(search);
 
 	//check if spotify is there
 	if (!spotifyTrack) {
-		res.send({
-			success: false,
-			error: {
-				code: 404,
-				description: "Not Found"
-			}
-		})
-		return;
+		//quality enhance
+		search = search.replace(",", ", ");
+		search = search.replace("/", ", ");
+
+		//try it again
+		spotifyTrack = await lookup.search(search);
+
+		if (!spotifyTrack) {
+			res.send({
+				success: false,
+				error: {
+					code: 404,
+					description: "Not Found"
+				}
+			})
+			return;
+		}
 	}
 
 	let track = await lookup.getTrack(spotifyTrack);
