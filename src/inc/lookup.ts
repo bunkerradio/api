@@ -115,7 +115,7 @@ class Lookup {
         deezerTrack = deezerTrack.data;
 
         if (deezerTrack.error) {
-            let search = `${artists} - ${spotifyTrack.name}`;
+            let search = `artist:"${artists}" track:"${spotifyTrack.name}"`;
             deezerTrack = await axios.get(`https://api.deezer.com/search?q=${encodeURIComponent(search)}&limit=1`);
             deezerTrack = deezerTrack.data.data[0];
         }
