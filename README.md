@@ -13,20 +13,26 @@ Register an application from [Spotify's API Dashboard](https://developer.spotify
 Enter the client ID and secret into the `config.json` file. You MUST do this in order to use the Song Lookup. Once done, do this:
 
 ```bash
-yarn add
+npm install
 ```
 
 ```bash
-yarn build && yarn authorize
+npm run-script build && npm run-script authorize
 ```
 
 To start the API, run this:
 
 ```bash
-yarn start
+npm start
 ```
 
 ## Usage
+
+Clear lookup track and album art cache:
+
+```bash
+npm run-script clear
+```
 
 JQuery Example:
 
