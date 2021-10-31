@@ -1,6 +1,7 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const ColorThief = require('color-thief');
-const config = require('../../config.json');
+const path = require('path');
+const config = require(path.join(__dirname, '../../config.json'));
 const colorThief = new ColorThief();
 import axios from 'axios';
 import fs from 'fs';
@@ -12,7 +13,7 @@ class Lookup {
             redirectUri: options.redirectUri
         });
 
-        const spotifyData = require('../../spotify.json');
+        const spotifyData = require(path.join(__dirname, '../../spotify.json'));
         if (spotifyData.refresh) {
             this.spotify.setRefreshToken(spotifyData.refresh);
             this.refreshToken();
@@ -23,7 +24,7 @@ class Lookup {
                     let config:any = {};
                     config.refresh = data.body['refresh_token'];
                     config.token = data.body['access_token'];
-                    fs.writeFileSync("../../spotify.json", JSON.stringify(config));
+                    fs.writeFileSync(path.join(__dirname, '../../spotify.json'), JSON.stringify(config));
         
                     console.log("Token generated");
                     
@@ -73,11 +74,11 @@ class Lookup {
     getColor(url: string, isrc: string) {
         return new Promise(async (resolve) => {
             let image = await axios({url: url, responseType: "stream"});
-	        let writer = fs.createWriteStream(`./cache/art/${isrc}.png`);
+	        let writer = fs.createWriteStream(path.join(__dirname, `../../cache/art/${isrc}.png`));
 	        await image.data.pipe(writer);
 
             writer.on("finish", () => {
-                let color = colorThief.getColor(`./cache/art/${isrc}.png`, 1);
+                let color = colorThief.getColor(path.join(__dirname, `../../cache/art/${isrc}.png`), 1);
                 resolve(color);
             })
         })
@@ -172,7 +173,7 @@ class Lookup {
         }
 
         //save and serve response
-        fs.writeFileSync(`./cache/data/${spotifyTrack.external_ids.isrc}.json`, JSON.stringify(response));
+        fs.writeFileSync(path.join(__dirname, `../../cache/data/${spotifyTrack.external_ids.isrc}.json`), JSON.stringify(response));
         return response; 
     };
 

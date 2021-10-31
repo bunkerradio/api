@@ -1,14 +1,15 @@
 const fs = require('fs');
-if (!fs.existsSync("../spotify.json")) {
+const path = require('path');
+if (!fs.existsSync(path.join(__dirname, "../spotify.json"))) {
 	console.log("Please run yarn authorize");
 	process.exit();
 }
 import fastify from 'fastify';
 import axios from 'axios';
 import { Stats } from './types/stats';
-const config = require('../config.json');
+const config = require(path.join(__dirname, "../config.json"));
 config.started = new Date();
-const Lookup = require('./inc/lookup');
+const Lookup = require(path.join(__dirname, "./inc/lookup"));
 
 const lookup = new Lookup({
 	clientId: config.spotify_client_id,
