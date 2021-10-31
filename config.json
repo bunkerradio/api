@@ -4,5 +4,5 @@
     "spotify_redirect":"http://localhost:5050/api/spotifyAuth",
     "azura_api_url":"https://radio.bunker.dance/connect",
     "http_port":5050,
-    "version": "1.0.0"
+    "version": "1.0.24"
 }
