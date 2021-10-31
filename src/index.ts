@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 if (!fs.existsSync(path.join(__dirname, "../spotify.json"))) {
-	console.log("Please run yarn authorize");
+	console.log("Please run npm run-script authorize");
 	process.exit();
 }
 import fastify from 'fastify';

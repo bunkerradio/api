@@ -17,8 +17,11 @@ console.log(`Please login with your spotify account here: ${authorizeURL}`);
 
 server.get('/api/spotifyAuth', async (req: any, res) => {
     fs.writeFileSync(path.join(__dirname, '../spotify.json'), JSON.stringify({code: req.query.code}));
-    res.send("Successfully Authenticated, you may now yarn start");
-    console.log("Successfully Authenticated, you may now yarn start");
+    fs.mkdirSync(path.join(__dirname, '../cache/'));
+    fs.mkdirSync(path.join(__dirname, '../cache/data/'));
+    fs.mkdirSync(path.join(__dirname, '../cache/art/'));
+    res.send("Successfully Authenticated, you may now npm start");
+    console.log("Successfully Authenticated, you may now npm start");
     process.exit();
 })
 
