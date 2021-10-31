@@ -26,7 +26,7 @@ server.addHook('onResponse', (req, res, done) => {
     done()
 })
 
-server.get('/api/', (req, res) => {
+server.get('/api', (req, res) => {
 	let endTime = <any>new Date();
   	var timeDiff = endTime - config.started; //in ms
   	// strip the ms
