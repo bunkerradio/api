@@ -19,7 +19,14 @@ const lookup = new Lookup({
 
 const server = fastify();
 
-server.get('/', (req, res) => {
+server.addHook('onResponse', (req, res, done) => {
+    let stats = JSON.parse(<any>fs.readFileSync(path.join(__dirname, "../stats.json")));
+    stats.requests++;
+    fs.writeFileSync(path.join(__dirname, "../stats.json"), JSON.stringify(stats));
+    done()
+})
+
+server.get('/api/', (req, res) => {
 	let endTime = <any>new Date();
   	var timeDiff = endTime - config.started; //in ms
   	// strip the ms
@@ -35,11 +42,14 @@ server.get('/', (req, res) => {
 	if (minutes < 10) {uptimeMinutes = "0"+minutes;}
 	if (seconds < 10) {uptimeSeconds = "0"+seconds;}
 
-  	// get seconds 
+	let stats = JSON.parse(fs.readFileSync(path.join(__dirname, "../stats.json")));
+
+	stats.uptime = uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds;
+
 	res.send({
 		version: config.version,
-		uptime: uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds,
-		wiki: "https://github.com/bunkerradio/api/wiki"
+		wiki: "https://github.com/bunkerradio/api/wiki",
+		stats
 	})
 })
 

@@ -20,6 +20,7 @@ server.get('/api/spotifyAuth', async (req: any, res) => {
     fs.mkdirSync(path.join(__dirname, '../cache/'));
     fs.mkdirSync(path.join(__dirname, '../cache/data/'));
     fs.mkdirSync(path.join(__dirname, '../cache/art/'));
+    fs.writeFileSync(path.join(__dirname, "../stats.json"), `{"requests": 0}`);
     res.send("Successfully Authenticated, you may now npm start");
     console.log("Successfully Authenticated, you may now npm start");
     process.exit();
