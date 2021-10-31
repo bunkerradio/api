@@ -44,6 +44,7 @@ server.get('/', (req, res) => {
 })
 
 server.get('/api/treble/stats', async (request, reply) => {
+	reply.header("Access-Control-Allow-Origin", "*");
 	const { data } = await axios.get<Stats>(config.azura_api_url ?? "https://radio.bunker.dance/connect");
 
 	let spotifyTrack = await lookup.search(data.now_playing.song.title, data.now_playing.song.artist);
@@ -77,6 +78,7 @@ server.get('/api/treble/stats', async (request, reply) => {
 });
 
 server.get("/api/treble/lookup", async (req: any, res) => {
+	res.header("Access-Control-Allow-Origin", "*");
 	if (!req.query.search) {
 		res.send({
 			success: false,
