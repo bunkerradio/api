@@ -44,7 +44,6 @@ class Lookup {
     async search(search:string = "") {
         let spotifyTracks = await this.spotify.searchTracks(search, {limit: 1});
 	    let spotifyTrack = spotifyTracks.body.tracks.items[0];
-
         return spotifyTrack;
     }
 
@@ -85,8 +84,17 @@ class Lookup {
     }
 
     async getLyrics(spotifyTrack:any) {
-        let lyrics = await axios.get(`https://api.lyrics.ovh/v1/${spotifyTrack.artists[0].name}/${spotifyTrack.name}`);
-        return lyrics.data.lyrics
+        let lyrics:any;
+        try {
+            lyrics = await axios.get(`https://api.lyrics.ovh/v1/${spotifyTrack.artists[0].name}/${spotifyTrack.name}`);
+        } catch (e) {
+            return false;
+        }
+        if (lyrics.data.lyrics) {
+            return lyrics.data.lyrics
+        } else {
+            return false;
+        }
     }
 
     combineArtists(artistList: any) {
