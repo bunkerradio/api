@@ -57,8 +57,15 @@ server.get('/api/treble/stats', async (request, reply) => {
 	reply.header("Access-Control-Allow-Origin", "*");
 	const { data } = await axios.get<Stats>(config.azura_api_url ?? "https://radio.bunker.dance/connect");
 
-	let spotifyTrack = await lookup.search(data.now_playing.song.title, data.now_playing.song.artist);
-	let track;
+	let fields = <any>data.now_playing.song.custom_fields;
+	let spotifyTrack:any;
+	if (fields.isrc) {
+		spotifyTrack = await lookup.search(`isrc:${fields.isrc}`)
+	} else {
+		spotifyTrack = await lookup.search(`track:${data.now_playing.song.title} artist:${data.now_playing.song.artist}`);
+	}
+
+	let track:any;
 	if (spotifyTrack) {
 		track = await lookup.getTrack(spotifyTrack);
 	} else {
