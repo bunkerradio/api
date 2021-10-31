@@ -107,9 +107,18 @@ class Lookup {
     }
 
     async cacheTrack(spotifyTrack:any) {
+        //combine artist names
+        let artists = this.combineArtists(spotifyTrack.artists);
+
         //get deezer since no cache
-        let deezerTracks = await axios.get(`https://api.deezer.com/2.0/track/isrc:${spotifyTrack.external_ids.isrc}&limit=1`);
-        let deezerTrack = deezerTracks.data;
+        let deezerTrack:any = await axios.get(`https://api.deezer.com/2.0/track/isrc:${spotifyTrack.external_ids.isrc}&limit=1`);
+        deezerTrack = deezerTrack.data;
+
+        if (deezerTrack.error) {
+            let search = `${artists} - ${spotifyTrack.name}`;
+            deezerTrack = await axios.get(`https://api.deezer.com/search?q=${encodeURIComponent(search)}&limit=1`);
+            deezerTrack = deezerTrack.data.data[0];
+        }
 
         let color = await this.getColor(deezerTrack.album.cover_medium, spotifyTrack.external_ids.isrc)
         //check for problems
@@ -127,9 +136,6 @@ class Lookup {
                 description: "This track has an explicit cover."
             })
         }
-
-        //combine artist names
-        let artists = this.combineArtists(spotifyTrack.artists);
 
         //get lyrics
         let lyrics = await this.getLyrics(spotifyTrack);
