@@ -10,12 +10,14 @@ import { Stats } from './types/stats';
 const config = require(path.join(__dirname, "../config.json"));
 config.started = new Date();
 const Lookup = require(path.join(__dirname, "./inc/lookup"));
+const Lyrics = require(path.join(__dirname, "./inc/lyrics"));
 
 const lookup = new Lookup({
 	clientId: config.spotify_client_id,
 	clientSecret: config.spotify_client_secret,
 	redirectUri: config.spotify_redirect
 });
+const lyrics = new Lyrics();
 
 const server = fastify();
 

@@ -1,8 +1,10 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const ColorThief = require('color-thief');
+const colorThief = new ColorThief();
 const path = require('path');
 const config = require(path.join(__dirname, '../../config.json'));
-const colorThief = new ColorThief();
+const Lyrics = require(path.join(__dirname, './lyrics'));
+const lyrics = new Lyrics();
 import axios from 'axios';
 import fs from 'fs';
 class Lookup {
@@ -83,20 +85,6 @@ class Lookup {
         })
     }
 
-    async getLyrics(spotifyTrack:any) {
-        let lyrics:any;
-        try {
-            lyrics = await axios.get(`https://api.lyrics.ovh/v1/${spotifyTrack.artists[0].name}/${spotifyTrack.name}`);
-        } catch (e) {
-            return false;
-        }
-        if (lyrics.data.lyrics) {
-            return lyrics.data.lyrics
-        } else {
-            return false;
-        }
-    }
-
     combineArtists(artistList: any) {
         let artists = "";
 	    artistList.forEach((item: any) => {
@@ -138,7 +126,7 @@ class Lookup {
         }
 
         //get lyrics
-        let lyrics = await this.getLyrics(spotifyTrack);
+        let songLyrics = await lyrics.search(spotifyTrack.name, artists);
 
         //make response
         var response = {
@@ -175,7 +163,7 @@ class Lookup {
             bpm: deezerTrack.bpm,
             gain: deezerTrack.gain,
             preview: spotifyTrack.preview_url || deezerTrack.preview,
-            lyrics,
+            lyrics: songLyrics,
             release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
             problems,
             powered_by: {
