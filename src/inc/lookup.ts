@@ -1,6 +1,5 @@
 const SpotifyWebApi = require('spotify-web-api-node');
-//const ColorThief = require('color-thief');
-//const colorThief = new ColorThief();
+const vibrant = require('node-vibrant')
 const path = require('path');
 const config = require(path.join(__dirname, '../../config.json'));
 const Lyrics = require(path.join(__dirname, './lyrics'));
@@ -79,9 +78,13 @@ class Lookup {
 	        await image.data.pipe(writer);
 
             writer.on("finish", () => {
-                //let color = colorThief.getColor(path.join(__dirname, `../../cache/art/${isrc}.png`), 1);
-                let color = [0, 0, 0];
-		resolve(color);
+                vibrant.from(path.join(__dirname, `../../cache/art/${isrc}.png`)).getPalette((err:any, palette:any) => {
+                    if (err) {
+                        resolve([0,0,0])
+                    } else {
+                        resolve(palette.Vibrant._rgb);
+                    }
+                })
             })
         })
     }
