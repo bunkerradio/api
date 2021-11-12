@@ -130,7 +130,7 @@ class Lookup {
         }
 
         //get lyrics
-        let songLyrics = await lyrics.search(spotifyTrack.name, artists);
+        let songLyrics = await lyrics.search(spotifyTrack.name, spotifyTrack.artists[0].name);
 
         //make response
         var response = {
