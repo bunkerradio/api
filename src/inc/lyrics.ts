@@ -18,19 +18,20 @@ class Lyrics {
                 resolve(result);
             })
             .catch(async (e) => {
-                let res = await axios.get(`https://lyrics.upbeat.pw/?title=${track}&artist=${artist}`);
-                let search = cheerio.load(res.data);
-                let lyrics = search("song").html();
+                //let res = await axios.get(`https://lyrics.upbeat.pw/?title=${track}&artist=${artist}`);
+                //let search = cheerio.load(res.data);
+                //let lyrics = search("song").html();
 
-                if (lyrics) {
-                    lyrics = lyrics.replace(/<br>/g, "");
-                    if (lyrics.startsWith("\n")) {
-                        lyrics.slice(2);
-                    }
-                    resolve(lyrics);
-                } else {
-                    resolve(false);
-                }
+                //if (lyrics) {
+                //    lyrics = lyrics.replace(/<br>/g, "");
+                //    if (lyrics.startsWith("\n")) {
+                //        lyrics.slice(2);
+                //    }
+                //    resolve(lyrics);
+                //} else {
+                //    resolve(false);
+                //}
+                resolve(false);
             });
         })
     }
