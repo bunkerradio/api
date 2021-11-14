@@ -158,6 +158,11 @@ class Lookup {
                 medium: deezerTrack.album.cover_medium,
                 small: deezerTrack.album.cover_small,
             },
+            covers_spotify: {
+                large: spotifyTrack.album.images[0].url,
+                medium: spotifyTrack.album.images[1].url,
+                small: spotifyTrack.album.images[2].url,
+            },
             spotify_id: spotifyTrack.id,
             deezer_id: deezerTrack.id,
             popularity: spotifyTrack.popularity,
