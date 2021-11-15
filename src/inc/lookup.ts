@@ -173,7 +173,7 @@ class Lookup {
             duration: spotifyTrack.duration_ms,
             bpm: deezerTrack.bpm,
             gain: deezerTrack.gain,
-            preview: spotifyTrack.preview_url || deezerTrack.preview,
+            preview: deezerTrack.preview || spotifyTrack.preview_url,
             lyrics: songLyrics.lyrics_body,
             lyrics_copyright: songLyrics.lyrics_copyright,
             release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
