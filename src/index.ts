@@ -47,6 +47,7 @@ server.get('/api', (req, res) => {
 	let stats = JSON.parse(fs.readFileSync(path.join(__dirname, "../stats.json")));
 
 	stats.uptime = uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds;
+	stats.cached_tracks = fs.readdirSync(path.join(__dirname, "../cache/data")).length
 
 	res.send({
 		version: config.version,
