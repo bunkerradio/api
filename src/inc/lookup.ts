@@ -130,7 +130,7 @@ class Lookup {
         }
 
         //get lyrics
-        let songLyrics = await lyrics.search(spotifyTrack.name, spotifyTrack.artists[0].name);
+        let songLyrics = await lyrics.search(spotifyTrack);
 
         //make response
         var response = {
@@ -165,6 +165,8 @@ class Lookup {
             },
             spotify_id: spotifyTrack.id,
             deezer_id: deezerTrack.id,
+            musixmatch_id: songLyrics.track_id,
+            soundcloud_id: songLyrics.track_soundcloud_id,
             popularity: spotifyTrack.popularity,
             rank: deezerTrack.rank,
             isrc: spotifyTrack.external_ids.isrc,
@@ -172,7 +174,8 @@ class Lookup {
             bpm: deezerTrack.bpm,
             gain: deezerTrack.gain,
             preview: spotifyTrack.preview_url || deezerTrack.preview,
-            lyrics: songLyrics,
+            lyrics: songLyrics.lyrics_body,
+            lyrics_copyright: songLyrics.lyrics_copyright,
             release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
             problems,
             powered_by: {
