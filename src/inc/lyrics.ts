@@ -16,7 +16,7 @@ class Lyrics {
             .then(async (data) => {
                 let api = data.data.message.body.macro_calls;
                 if (api['track.lyrics.get'] && api['matcher.track.get']) {
-                    api['track.lyrics.get'].message.body.lyrics.track_id = api['matcher.track.get'].message.body.track.track_id
+                    api['track.lyrics.get'].message.body.lyrics.track_id = api['matcher.track.get'].message.body.track.track_id || false;
                     api['track.lyrics.get'].message.body.lyrics.track_soundcloud_id = api['matcher.track.get'].message.body.track.track_soundcloud_id || false
                     resolve(api['track.lyrics.get'].message.body.lyrics)
                 } else {
