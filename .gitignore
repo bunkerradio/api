@@ -11,4 +11,3 @@ config.json
 # API
 spotify.json
 cache/
-*.zip
