@@ -12,11 +12,13 @@
 		"@types/morgan": "^1.9.3",
 		"@types/node": "^16.11.6",
 		"axios": "^0.24.0",
+		"cheerio": "^1.0.0-rc.10",
 		"color-thief": "^2.2.5",
 		"express": "^4.17.1",
 		"fastify": "^3.22.1",
 		"fs": "0.0.1-security",
 		"morgan": "^1.10.0",
+		"node-vibrant": "^3.2.1-alpha.1",
 		"nodemon": "^2.0.14",
 		"spotify-web-api-node": "^5.0.2",
 		"ts-node": "^10.4.0",
@@ -25,6 +27,7 @@
 	"scripts": {
 		"build": "tsc",
 		"start": "node .",
+		"test": "node dist/test.js",
 		"authorize": "node dist/authorize.js",
 		"clear": "node dist/clear.js"
 	},

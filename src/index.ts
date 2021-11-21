@@ -1,24 +1,34 @@
 const fs = require('fs');
-if (!fs.existsSync("../spotify.json")) {
-	console.log("Please run yarn authorize");
+const path = require('path');
+if (!fs.existsSync(path.join(__dirname, "../spotify.json"))) {
+	console.log("Please run npm run-script authorize");
 	process.exit();
 }
 import fastify from 'fastify';
 import axios from 'axios';
 import { Stats } from './types/stats';
-const config = require('../config.json');
+const config = require(path.join(__dirname, "../config.json"));
 config.started = new Date();
-const Lookup = require('./inc/lookup');
+const Lookup = require(path.join(__dirname, "./inc/lookup"));
+const Lyrics = require(path.join(__dirname, "./inc/lyrics"));
 
 const lookup = new Lookup({
 	clientId: config.spotify_client_id,
 	clientSecret: config.spotify_client_secret,
 	redirectUri: config.spotify_redirect
 });
+const lyrics = new Lyrics();
 
 const server = fastify();
 
-server.get('/', (req, res) => {
+server.addHook('onResponse', (req, res, done) => {
+    let stats = JSON.parse(<any>fs.readFileSync(path.join(__dirname, "../stats.json")));
+    stats.requests++;
+    fs.writeFileSync(path.join(__dirname, "../stats.json"), JSON.stringify(stats));
+    done()
+})
+
+server.get('/api', (req, res) => {
 	let endTime = <any>new Date();
   	var timeDiff = endTime - config.started; //in ms
   	// strip the ms
@@ -34,19 +44,31 @@ server.get('/', (req, res) => {
 	if (minutes < 10) {uptimeMinutes = "0"+minutes;}
 	if (seconds < 10) {uptimeSeconds = "0"+seconds;}
 
-  	// get seconds 
+	let stats = JSON.parse(fs.readFileSync(path.join(__dirname, "../stats.json")));
+
+	stats.uptime = uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds;
+	stats.cached_tracks = fs.readdirSync(path.join(__dirname, "../cache/data")).length
+
 	res.send({
 		version: config.version,
-		uptime: uptimeHours+':'+uptimeMinutes+':'+uptimeSeconds,
-		wiki: "https://github.com/bunkerradio/api/wiki"
+		wiki: "https://github.com/bunkerradio/api/wiki",
+		stats
 	})
 })
 
 server.get('/api/treble/stats', async (request, reply) => {
+	reply.header("Access-Control-Allow-Origin", "*");
 	const { data } = await axios.get<Stats>(config.azura_api_url ?? "https://radio.bunker.dance/connect");
 
-	let spotifyTrack = await lookup.search(data.now_playing.song.title, data.now_playing.song.artist);
-	let track;
+	let fields = <any>data.now_playing.song.custom_fields;
+	let spotifyTrack:any;
+	if (fields.isrc) {
+		spotifyTrack = await lookup.search(`isrc:${fields.isrc}`)
+	} else {
+		spotifyTrack = await lookup.search(`track:${data.now_playing.song.title} artist:${data.now_playing.song.artist}`);
+	}
+
+	let track:any;
 	if (spotifyTrack) {
 		track = await lookup.getTrack(spotifyTrack);
 	} else {
@@ -76,7 +98,10 @@ server.get('/api/treble/stats', async (request, reply) => {
 });
 
 server.get("/api/treble/lookup", async (req: any, res) => {
-	if (!req.query.search) {
+	res.header("Access-Control-Allow-Origin", "*");
+	let search = req.query.search;
+
+	if (!search) {
 		res.send({
 			success: false,
 			error: {
@@ -87,18 +112,27 @@ server.get("/api/treble/lookup", async (req: any, res) => {
 		return;
 	}
 	//get spotify track list
-	let spotifyTrack = await lookup.search(req.query.search);
+	let spotifyTrack = await lookup.search(search);
 
 	//check if spotify is there
 	if (!spotifyTrack) {
-		res.send({
-			success: false,
-			error: {
-				code: 404,
-				description: "Not Found"
-			}
-		})
-		return;
+		//quality enhance
+		search = search.replace(",", ", ");
+		search = search.replace("/", ", ");
+
+		//try it again
+		spotifyTrack = await lookup.search(search);
+
+		if (!spotifyTrack) {
+			res.send({
+				success: false,
+				error: {
+					code: 404,
+					description: "Not Found"
+				}
+			})
+			return;
+		}
 	}
 
 	let track = await lookup.getTrack(spotifyTrack);

@@ -1,7 +1,9 @@
 const SpotifyWebApi = require('spotify-web-api-node');
-const ColorThief = require('color-thief');
-const config = require('../../config.json');
-const colorThief = new ColorThief();
+const vibrant = require('node-vibrant')
+const path = require('path');
+const config = require(path.join(__dirname, '../../config.json'));
+const Lyrics = require(path.join(__dirname, './lyrics'));
+const lyrics = new Lyrics();
 import axios from 'axios';
 import fs from 'fs';
 class Lookup {
@@ -12,7 +14,7 @@ class Lookup {
             redirectUri: options.redirectUri
         });
 
-        const spotifyData = require('../../spotify.json');
+        const spotifyData = require(path.join(__dirname, '../../spotify.json'));
         if (spotifyData.refresh) {
             this.spotify.setRefreshToken(spotifyData.refresh);
             this.refreshToken();
@@ -23,7 +25,7 @@ class Lookup {
                     let config:any = {};
                     config.refresh = data.body['refresh_token'];
                     config.token = data.body['access_token'];
-                    fs.writeFileSync("../../spotify.json", JSON.stringify(config));
+                    fs.writeFileSync(path.join(__dirname, '../../spotify.json'), JSON.stringify(config));
         
                     console.log("Token generated");
                     
@@ -43,7 +45,6 @@ class Lookup {
     async search(search:string = "") {
         let spotifyTracks = await this.spotify.searchTracks(search, {limit: 1});
 	    let spotifyTrack = spotifyTracks.body.tracks.items[0];
-
         return spotifyTrack;
     }
 
@@ -73,12 +74,17 @@ class Lookup {
     getColor(url: string, isrc: string) {
         return new Promise(async (resolve) => {
             let image = await axios({url: url, responseType: "stream"});
-	        let writer = fs.createWriteStream(`./cache/art/${isrc}.png`);
+	        let writer = fs.createWriteStream(path.join(__dirname, `../../cache/art/${isrc}.png`));
 	        await image.data.pipe(writer);
 
             writer.on("finish", () => {
-                let color = colorThief.getColor(`./cache/art/${isrc}.png`, 1);
-                resolve(color);
+                vibrant.from(path.join(__dirname, `../../cache/art/${isrc}.png`)).getPalette((err:any, palette:any) => {
+                    if (err) {
+                        resolve([0,0,0])
+                    } else {
+                        resolve(palette.Vibrant._rgb);
+                    }
+                })
             })
         })
     }
@@ -93,9 +99,18 @@ class Lookup {
     }
 
     async cacheTrack(spotifyTrack:any) {
+        //combine artist names
+        let artists = this.combineArtists(spotifyTrack.artists);
+
         //get deezer since no cache
-        let deezerTracks = await axios.get(`https://api.deezer.com/2.0/track/isrc:${spotifyTrack.external_ids.isrc}&limit=1`);
-        let deezerTrack = deezerTracks.data;
+        let deezerTrack:any = await axios.get(`https://api.deezer.com/2.0/track/isrc:${spotifyTrack.external_ids.isrc}&limit=1`);
+        deezerTrack = deezerTrack.data;
+
+        if (deezerTrack.error) {
+            let search = `artist:"${artists}" track:"${spotifyTrack.name}"`;
+            deezerTrack = await axios.get(`https://api.deezer.com/search?q=${encodeURIComponent(search)}&limit=1`);
+            deezerTrack = deezerTrack.data.data[0];
+        }
 
         let color = await this.getColor(deezerTrack.album.cover_medium, spotifyTrack.external_ids.isrc)
         //check for problems
@@ -114,8 +129,8 @@ class Lookup {
             })
         }
 
-        //combine artist names
-        let artists = this.combineArtists(spotifyTrack.artists);
+        //get lyrics
+        let songLyrics = await lyrics.search(spotifyTrack);
 
         //make response
         var response = {
@@ -143,15 +158,24 @@ class Lookup {
                 medium: deezerTrack.album.cover_medium,
                 small: deezerTrack.album.cover_small,
             },
+            covers_spotify: {
+                large: spotifyTrack.album.images[0].url,
+                medium: spotifyTrack.album.images[1].url,
+                small: spotifyTrack.album.images[2].url,
+            },
             spotify_id: spotifyTrack.id,
             deezer_id: deezerTrack.id,
+            musixmatch_id: songLyrics.track_id || false,
+            soundcloud_id: songLyrics.track_soundcloud_id || false,
             popularity: spotifyTrack.popularity,
             rank: deezerTrack.rank,
             isrc: spotifyTrack.external_ids.isrc,
             duration: spotifyTrack.duration_ms,
             bpm: deezerTrack.bpm,
             gain: deezerTrack.gain,
-            preview: spotifyTrack.preview_url || deezerTrack.preview,
+            preview: deezerTrack.preview || spotifyTrack.preview_url,
+            lyrics: songLyrics.lyrics_body,
+            lyrics_copyright: songLyrics.lyrics_copyright,
             release_date: new Date(spotifyTrack.album.release_date).getTime() / 1000,
             problems,
             powered_by: {
@@ -163,7 +187,7 @@ class Lookup {
         }
 
         //save and serve response
-        fs.writeFileSync(`./cache/data/${spotifyTrack.external_ids.isrc}.json`, JSON.stringify(response));
+        fs.writeFileSync(path.join(__dirname, `../../cache/data/${spotifyTrack.external_ids.isrc}.json`), JSON.stringify(response));
         return response; 
     };
 
