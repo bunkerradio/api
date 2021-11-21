@@ -1,13 +1,15 @@
 {
 	"compilerOptions": {
+		"target": "esnext",
+		"allowJs": false,
+		"skipLibCheck": true,
+		"strict": false,
 		"forceConsistentCasingInFileNames": true,
 		"module": "commonjs",
+		"moduleResolution": "node",
 		"esModuleInterop": true,
-		"outDir": "dist",
-		"rootDir": "src",
-		"target": "es6",
-		"skipLibCheck": true,
-		"strict": false
+		"resolveJsonModule": true,
+		"outDir": "./dist"
 	},
-	"exclude": ["dist", "node_modules"]
+	"include": ["src", "@types/index.d.ts"]
 }
