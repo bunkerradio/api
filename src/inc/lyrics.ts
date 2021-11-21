@@ -8,7 +8,8 @@ class Lyrics {
 	        })
 	        artists = artists.substring(0, artists.length - 2);
 
-            //don't ask...
+            // Connect to the MusixMatch API, actually cry about it. :grinning:
+
             axios.get(`https://apic-desktop.musixmatch.com/ws/1.1/macro.subtitles.get?format=json&q_track=${spotifyTrack.name}&q_artist=${spotifyTrack.artists[0].name}&q_artists=${artists}&q_album=${spotifyTrack.album.name}&user_language=en&f_subtitle_length=${(spotifyTrack.duration_ms/1000).toFixed(0)}&q_duration=${spotifyTrack.duration_ms/1000}&tags=nowplaying&userblob_id=eW91J3ZlIGRvbmUgZW5vdWdoX2dvcmdvbiBjaXR5XzIxMy41NDY&namespace=lyrics_synched&track_spotify_id=spotify:track:${spotifyTrack.id}&f_subtitle_length_max_deviation=1&subtitle_format=mxm&app_id=web-desktop-app-v1.0&usertoken=18111573a5d5b7855fec189fa5fc591c6a61d4dab03f4e8592f3db&guid=e05094a3-30c0-47e9-b5ed-e3a657a4a72f&signature=fMi1gjVjkDMRQ7a0+tvTvFmCUGo=&signature_protocol=sha1`, {
                 headers: {
                     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Musixmatch/0.21.27 Chrome/66.0.3359.181 Electron/3.1.3 Safari/537.36",
