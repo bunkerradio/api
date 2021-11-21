@@ -1,5 +1,6 @@
-import fs from 'fs';
-const path = require('path');
+import fs from "fs";
+import path from "path";
+
 fs.readdir(path.join(__dirname, "../cache/data"), (err, files) => {
     if (err) throw err;
   

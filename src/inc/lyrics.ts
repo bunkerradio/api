@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios from "axios";
+
 class Lyrics {
     async search(spotifyTrack:any) {
         return new Promise((resolve) => {
@@ -33,4 +34,4 @@ class Lyrics {
     }
 }
 
-module.exports = Lyrics;
+export default Lyrics;

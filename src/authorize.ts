@@ -1,8 +1,9 @@
-const SpotifyWebApi = require('spotify-web-api-node');
-const path = require('path');
-const config = require(path.join(__dirname, '../config.json'));
-import fastify from 'fastify';
-import fs from 'fs';
+import fastify from "fastify";
+import fs from "fs";
+import path from "path";
+import SpotifyWebApi from "spotify-web-api-node";
+
+import config from "../config.json";
 
 const server = fastify();
 

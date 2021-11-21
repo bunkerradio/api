@@ -92,6 +92,10 @@ declare global {
     art: string;
     custom_fields: any[];
   }
+
+  interface Lookup {
+    spotify: any;
+  }
 }
 
-export {};
+export { };

@@ -1,16 +1,17 @@
-const fs = require('fs');
-const path = require('path');
 if (!fs.existsSync(path.join(__dirname, "../spotify.json"))) {
 	console.log("Please run npm run-script authorize");
 	process.exit();
 }
 import axios from "axios";
 import fastify from "fastify";
+import fs from "fs";
+import path from "path";
 
-const config = require(path.join(__dirname, "../config.json"));
-config.started = new Date();
-const Lookup = require(path.join(__dirname, "./inc/lookup"));
-const Lyrics = require(path.join(__dirname, "./inc/lyrics"));
+import config from "../config.json";
+import Lookup from "./inc/lookup";
+import Lyrics from "./inc/lyrics";
+
+const started = new Date();
 
 const lookup = new Lookup({
 	clientId: config.spotify_client_id,

@@ -4,8 +4,9 @@ const path = require('path');
 const config = require(path.join(__dirname, '../../config.json'));
 const Lyrics = require(path.join(__dirname, './lyrics'));
 const lyrics = new Lyrics();
-import axios from 'axios';
-import fs from 'fs';
+import axios from "axios";
+import fs from "fs";
+
 class Lookup {
     constructor(options: any) {
         this.spotify = new SpotifyWebApi({
@@ -231,8 +232,4 @@ class Lookup {
     }
 }
 
-interface Lookup {
-    spotify: any;
-}
-
-module.exports = Lookup;
+export default Lookup;
