@@ -4,9 +4,9 @@ if (!fs.existsSync(path.join(__dirname, "../spotify.json"))) {
 	console.log("Please run npm run-script authorize");
 	process.exit();
 }
-import fastify from 'fastify';
-import axios from 'axios';
-import { Stats } from './types/stats';
+import axios from "axios";
+import fastify from "fastify";
+
 const config = require(path.join(__dirname, "../config.json"));
 config.started = new Date();
 const Lookup = require(path.join(__dirname, "./inc/lookup"));
