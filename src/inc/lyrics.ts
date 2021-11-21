@@ -22,6 +22,7 @@ class Lyrics {
             api['track.lyrics.get'].message.body.lyrics.track_soundcloud_id = api['matcher.track.get'].message.body.track.track_soundcloud_id || false
             resolve(api['track.lyrics.get'].message.body.lyrics)
           } else resolve(false);
+
         })
         .catch(e => {
           console.log(e);
